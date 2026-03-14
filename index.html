@@ -75,7 +75,7 @@
       width: 100%;
       max-width: 420px;
       text-align: center;
-      margin-top: 30px;
+      margin-top: 60px;
     }
 
     .title {
@@ -335,9 +335,6 @@
 
     <div class="paper-stage" id="paperStage"></div>
 
-    <div class="bottom-bar">Prototype v1 · 单文件演示版 · 可继续改成 App</div>
-  </div>
-
   <script>
     const answers = [
       "是的，去做吧。",
@@ -399,7 +396,7 @@
       paper.className = 'paper';
       paper.innerHTML = `
         <div class="paper-answer">${answer}</div>
-        <div class="paper-sub">请只问一次。真正的答案，通常只落下一张。</div>
+        <div class="paper-sub">真正的答案，通常只落下一张。</div>
       `;
 
       paperStage.appendChild(paper);
