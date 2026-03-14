@@ -1,1 +1,490 @@
 # The-Book-of-answers
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>答案之书</title>
+  <style>
+    :root {
+      --bg1: #0f172a;
+      --bg2: #1e293b;
+      --gold: #f8d27a;
+      --paper: #fffaf0;
+      --ink: #2b2b2b;
+      --muted: rgba(255,255,255,0.72);
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at top, #334155 0%, var(--bg1) 45%, #020617 100%);
+      color: white;
+    }
+
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: env(safe-area-inset-top, 20px) 18px env(safe-area-inset-bottom, 20px);
+    }
+
+    .stars,
+    .stars::before,
+    .stars::after {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.95) 1px, transparent 1.5px),
+        radial-gradient(circle, rgba(255,255,255,0.65) 1px, transparent 1.5px),
+        radial-gradient(circle, rgba(255,255,255,0.45) 1px, transparent 1.5px);
+      background-size: 140px 140px, 220px 220px, 300px 300px;
+      background-position: 10px 20px, 80px 120px, 150px 40px;
+      content: "";
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    .stars::before {
+      transform: scale(1.1);
+      opacity: 0.22;
+      filter: blur(1px);
+    }
+
+    .stars::after {
+      transform: scale(1.2);
+      opacity: 0.12;
+      filter: blur(2px);
+    }
+
+    .header {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin: 0;
+      color: #fff8dc;
+      text-shadow: 0 4px 20px rgba(248,210,122,0.25);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .orb-wrap {
+      position: relative;
+      z-index: 2;
+      margin-top: 48px;
+      width: 240px;
+      height: 240px;
+      display: grid;
+      place-items: center;
+    }
+
+    .orb-glow {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(248,210,122,0.20) 0%, rgba(248,210,122,0.07) 45%, transparent 70%);
+      filter: blur(8px);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    .orb {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.20);
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), rgba(255,255,255,0.08) 30%, rgba(248,210,122,0.12) 55%, rgba(255,255,255,0.05) 100%);
+      box-shadow: inset 0 0 30px rgba(255,255,255,0.12), 0 20px 50px rgba(0,0,0,0.35);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      animation: float 3.2s ease-in-out infinite;
+    }
+
+    .orb-text {
+      font-size: 18px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.92);
+      font-weight: 700;
+    }
+
+    .controls {
+      position: relative;
+      z-index: 2;
+      margin-top: 40px;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform 0.16s ease, opacity 0.16s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #f8d27a, #f5b942);
+      color: #2b2113;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.10);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: none;
+    }
+
+    .hint {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+      min-height: 40px;
+    }
+
+    .paper-stage {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 4;
+    }
+
+    .paper {
+      position: absolute;
+      left: 50%;
+      top: -280px;
+      width: min(82vw, 340px);
+      min-height: 200px;
+      transform: translateX(-50%) rotate(-8deg);
+      background: linear-gradient(180deg, #fffdf8 0%, var(--paper) 100%);
+      border-radius: 16px;
+      color: var(--ink);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+      padding: 22px 20px 24px;
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border: 1px solid rgba(60,60,60,0.08);
+    }
+
+    .paper::before {
+      content: "答案之书";
+      font-size: 12px;
+      letter-spacing: 4px;
+      color: #9a7b38;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .paper::after {
+      content: "✦";
+      font-size: 16px;
+      color: #caa64f;
+      margin-top: 14px;
+      display: block;
+    }
+
+    .paper-answer {
+      font-size: 24px;
+      line-height: 1.7;
+      font-weight: 700;
+      white-space: pre-wrap;
+    }
+
+    .paper-sub {
+      font-size: 13px;
+      color: #6b6470;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    .paper.show {
+      animation: fall 1.5s cubic-bezier(.2, .75, .16, 1), sway 2.5s ease-in-out 1.2s infinite alternate;
+      opacity: 1;
+      top: 18%;
+    }
+
+    .bottom-bar {
+      position: absolute;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+      left: 18px;
+      right: 18px;
+      z-index: 2;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+
+    @keyframes fall {
+      0% {
+        opacity: 0;
+        top: -280px;
+        transform: translateX(-50%) rotate(-16deg) scale(0.92);
+      }
+      45% {
+        opacity: 1;
+        transform: translateX(-50%) rotate(11deg) scale(1);
+      }
+      70% {
+        top: 15%;
+        transform: translateX(-50%) rotate(-6deg);
+      }
+      85% {
+        top: 20%;
+        transform: translateX(-50%) rotate(4deg);
+      }
+      100% {
+        top: 18%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(-2deg);
+      }
+    }
+
+    @keyframes sway {
+      from { transform: translateX(-50%) rotate(-2deg); }
+      to { transform: translateX(-50%) rotate(2deg); }
+    }
+
+    @media (max-width: 400px) {
+      .title { font-size: 28px; }
+      .orb-wrap { margin-top: 36px; }
+      .orb { width: 164px; height: 164px; }
+      .paper-answer { font-size: 21px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="stars"></div>
+
+    <header class="header">
+      <h1 class="title">答案之书</h1>
+      <p class="subtitle">默念你的问题，轻轻摇一摇手机。<br>宇宙会让一张纸片飘落到你面前。</p>
+    </header>
+
+    <section class="orb-wrap" aria-hidden="true">
+      <div class="orb-glow"></div>
+      <div class="orb">
+        <div class="orb-text" id="orbText">把问题放在心里<br>然后开始摇动</div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <button class="btn btn-primary" id="askBtn">摇一摇 / 抽一张答案</button>
+      <button class="btn btn-secondary" id="permissionBtn">开启手机晃动权限</button>
+      <div class="hint" id="hintText">iPhone 上第一次使用时，先点“开启手机晃动权限”。如果电脑上预览，直接点上面的按钮也可以测试。</div>
+    </section>
+
+    <div class="paper-stage" id="paperStage"></div>
+
+    <div class="bottom-bar">Prototype v1 · 单文件演示版 · 可继续改成 App</div>
+  </div>
+
+  <script>
+    const answers = [
+      "是的，去做吧。",
+      "不是现在。",
+      "再等等，会更清楚。",
+      "相信你第一瞬间的直觉。",
+      "答案已经在你心里。",
+      "大胆一点，宇宙在支持你。",
+      "今天不适合做决定。",
+      "先休息，再回来问一次。",
+      "这件事值得你坚持。",
+      "先别追问结果，先开始。",
+      "你担心的事情不会那么严重。",
+      "把它说出来，会有帮助。",
+      "试一次，你会得到新的线索。",
+      "现在的沉默本身就是答案。",
+      "放下控制，事情会自然展开。",
+      "向前一步，局面就会改变。",
+      "不要重复问同一个问题。",
+      "你需要的不是答案，而是勇气。",
+      "这个选择会让你成长。",
+      "不如换个角度再看。",
+      "有人会在关键时刻帮助你。",
+      "你的直觉是对的。",
+      "别急，时机还没到。",
+      "先完成眼前最小的一步。",
+      "保留一点神秘感更好。"
+    ];
+
+    const askBtn = document.getElementById('askBtn');
+    const permissionBtn = document.getElementById('permissionBtn');
+    const paperStage = document.getElementById('paperStage');
+    const hintText = document.getElementById('hintText');
+    const orbText = document.getElementById('orbText');
+
+    let isAnimating = false;
+    let lastShakeTime = 0;
+    let lastX = null;
+    let lastY = null;
+    let lastZ = null;
+    let motionEnabled = false;
+
+    function randomAnswer() {
+      return answers[Math.floor(Math.random() * answers.length)];
+    }
+
+    function clearPaper() {
+      paperStage.innerHTML = '';
+    }
+
+    function showAnswer(answer) {
+      if (isAnimating) return;
+      isAnimating = true;
+      clearPaper();
+
+      orbText.innerHTML = '宇宙正在翻页…';
+
+      const paper = document.createElement('div');
+      paper.className = 'paper';
+      paper.innerHTML = `
+        <div class="paper-answer">${answer}</div>
+        <div class="paper-sub">请只问一次。真正的答案，通常只落下一张。</div>
+      `;
+
+      paperStage.appendChild(paper);
+
+      requestAnimationFrame(() => {
+        paper.classList.add('show');
+      });
+
+      setTimeout(() => {
+        orbText.innerHTML = '再问一次之前<br>先想想这句话';
+        isAnimating = false;
+      }, 1600);
+    }
+
+    function triggerAnswer() {
+      const answer = randomAnswer();
+      showAnswer(answer);
+    }
+
+    askBtn.addEventListener('click', triggerAnswer);
+
+    async function requestMotionPermission() {
+      try {
+        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+          const response = await DeviceMotionEvent.requestPermission();
+          if (response === 'granted') {
+            motionEnabled = true;
+            hintText.textContent = '已开启晃动检测。现在可以摇手机试试看。';
+            permissionBtn.textContent = '晃动权限已开启';
+            permissionBtn.disabled = true;
+            permissionBtn.style.opacity = '0.6';
+          } else {
+            hintText.textContent = '没有获得权限，你仍然可以点击按钮抽取答案。';
+          }
+        } else {
+          motionEnabled = true;
+          hintText.textContent = '当前设备不需要额外权限，若支持传感器，摇动即可触发。';
+          permissionBtn.textContent = '当前设备无需授权';
+          permissionBtn.disabled = true;
+          permissionBtn.style.opacity = '0.6';
+        }
+      } catch (error) {
+        hintText.textContent = '权限请求失败，你仍然可以点击按钮抽取答案。';
+        console.error(error);
+      }
+    }
+
+    permissionBtn.addEventListener('click', requestMotionPermission);
+
+    window.addEventListener('devicemotion', (event) => {
+      if (!motionEnabled && typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        return;
+      }
+
+      const acc = event.accelerationIncludingGravity;
+      if (!acc) return;
+
+      const x = acc.x;
+      const y = acc.y;
+      const z = acc.z;
+
+      if (lastX === null || lastY === null || lastZ === null) {
+        lastX = x;
+        lastY = y;
+        lastZ = z;
+        return;
+      }
+
+      const deltaX = Math.abs(x - lastX);
+      const deltaY = Math.abs(y - lastY);
+      const deltaZ = Math.abs(z - lastZ);
+      const totalDelta = deltaX + deltaY + deltaZ;
+      const now = Date.now();
+
+      if (totalDelta > 24 && now - lastShakeTime > 1400 && !isAnimating) {
+        lastShakeTime = now;
+        triggerAnswer();
+      }
+
+      lastX = x;
+      lastY = y;
+      lastZ = z;
+    });
+  </script>
+</body>
+</html>
